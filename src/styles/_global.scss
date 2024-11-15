@@ -1,0 +1,17 @@
+@import url("./normalise.scss");
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap');
+
+#root {
+  min-height: 100vh;
+  margin: 0 auto;
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex-grow: 1;
+}
+
+@import url("./navigation.scss"), url("./footer.scss"), url("./auth.scss");
