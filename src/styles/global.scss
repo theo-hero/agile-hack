@@ -1,3 +1,9 @@
+$primary: white;
+$secondary: #333;
+$accent: #ff7a55;
+$text: black;
+$light-text: #666;
+
 @import url("./normalise.scss");
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap');
 
@@ -50,45 +56,8 @@ button {
   // }
 }
 
-@import url("./navigation.scss"), url("./footer.scss");
-
-.upload-box {
-  background-color: #fff;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  padding: 2rem;
-  transform: translate(-50%, -50%);
-  border: black 1px solid;
-}
-
-input[type="file"] {
-  display: block;
-  margin: 0 auto;
-  padding: 10px;
-  font-size: 16px;
-  background-color: #fff;
-  color: #000;
-  cursor: pointer;
-}
-
-input[type="file"]:hover {
-  background-color: #f0f0f0;
-}
-
-input[type="file"]::-webkit-file-upload-button {
-  background: #fff;
-  color: #000;
-  border: 1px solid #000;
-  border-radius: 4px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-input[type="file"]::-webkit-file-upload-button:hover {
-  background: #f0f0f0;
-}
+@import url("./navigation.scss"), url("./footer.scss"), url("./sprintlist.scss");
+@import url("./slider.scss");
 
 .sprint-list {
   margin: 20px;
@@ -142,4 +111,13 @@ h2 {
 
 a {
   text-decoration: none;
+}
+
+.button_round {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  width: 25px;
+  aspect-ratio: 1 / 1;
+  background-image: url('../assets/close.svg');
 }

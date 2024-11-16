@@ -6,9 +6,13 @@ interface CsvRow {
   [key: string]: string | number;
 }
 
-const FileUpload = () => {
+interface UploadProps {
+  setAdd: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const FileUpload = ({ setAdd }: UploadProps) => {
   const [file, setFile] = useState<File | null>(null);
-  const [csvData, setCsvData] = useState<CsvRow[]>([]);
+  const [jsonData, setJsonData] = useState<CsvRow[]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -17,6 +21,7 @@ const FileUpload = () => {
     } else {
       alert('Пожалуйста, выберите файл с расширением .csv.');
       setFile(null);
+      console.log(jsonData);
     }
   };
 
@@ -28,22 +33,6 @@ const FileUpload = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await axios.post('/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log(response.data);
-      alert('Файл успешно загружен!');
-    } catch (error) {
-      console.error('Ошибка загрузки:', error);
-      alert('Не получилось загрузить файл.');
-    }
-
     parseCsvFile(file);
   };
 
@@ -53,30 +42,53 @@ const FileUpload = () => {
       const fileContent = reader.result as string;
       Papa.parse(fileContent, {
         complete: (result) => {
-          const data = result.data as string[][];
-          const headers: string[] = data[0];
+          const data = result.data as string[][]; // Parse the CSV into an array of arrays
+          const headers = data[1]; // Extract headers from the second row (1st index)
+          const rows = data.slice(2); // Extract rows starting from the third row
 
-          const parsedData = data.slice(1).map((row) => {
+          // Log for debugging
+          console.log('Headers:', headers);
+          console.log('Rows:', rows);
+
+          // Map the rows to objects with headers as keys
+          const parsedData = rows.map((row) => {
             const rowObj: CsvRow = {};
             row.forEach((cell, index) => {
               const header = headers[index];
-              rowObj[header] = cell;
+              if (header) {
+                rowObj[header] = cell;
+              }
             });
             return rowObj;
           });
 
-          setCsvData(parsedData);
-          console.log('Результат парсинга CSV:', csvData);
+          setJsonData(parsedData); // Set the state with the parsed JSON data
+          sendJsonData(parsedData); // Optionally send data to the server
         },
         skipEmptyLines: true,
-        delimiter: ';',
+        delimiter: ';', // Ensure this matches your CSV delimiter
       });
     };
     reader.readAsText(file);
   };
 
+  const sendJsonData = async (data: CsvRow[]) => {
+    try {
+      const response = await axios.post('/upload', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response.data);
+      alert('Файл успешно загружен!');
+    } catch (error) {
+      console.error('Ошибка загрузки:', error);
+    }
+  };
+
   return (
     <div className="upload-box">
+      <button className="button_round" onClick={() => setAdd(false)}></button>
       <h2>Добавить файл CSV</h2>
       <form onSubmit={handleSubmit}>
         <input type="file" onChange={handleFileChange} />

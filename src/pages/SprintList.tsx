@@ -57,7 +57,7 @@ const SprintList = () => {
       </div>
       <div className="sprint-items">
         {sortedSprints.map((sprint) => (
-          <Link to={`/sprints/${sprint.id}`}>
+          <Link to={`/sprints/${sprint.id}`} key={sprint.id}>
             <div className="sprint-items__item" key={sprint.id}>
               <h3>{sprint.name}</h3>
               <p><strong>Начат:</strong> {sprint.startDate}</p>

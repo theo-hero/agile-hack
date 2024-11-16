@@ -3,7 +3,7 @@ import FileUpload from './components/FileUpload';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import './styles/_global.scss'
+import './styles/global.scss'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SprintList from './pages/SprintList';
 
@@ -20,7 +20,7 @@ function App() {
           {/* <Route path="/teams" element={<Teams />} /> */}
           <Route path="*" element={<Home />} />
         </Routes>
-        {add && <FileUpload />}
+        {add && <FileUpload setAdd={setAdd}/>}
         <Footer />
       </Router>
     </>
