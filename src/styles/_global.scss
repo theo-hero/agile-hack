@@ -14,4 +14,132 @@ main {
   flex-grow: 1;
 }
 
-@import url("./navigation.scss"), url("./footer.scss"), url("./auth.scss");
+button {
+  background-color: transparent;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 16px;
+  position: relative;
+
+  &:hover {
+    background-color: rgba(249, 196, 172, 0.603);
+  }
+
+  // &::after {
+  //   content: '';
+  //   position: absolute;
+  //   top: 50%;
+  //   left: 50%;
+  //   transform: translate(-50%, -50%);
+  //   width: 60%;
+  //   height: 10px;
+  //   background-color: rgba(255, 68, 0, 0.7);
+  //   filter: blur(10px);
+  //   border-radius: 50%;
+  //   opacity: 0;
+  //   transition: all 0.3s ease;
+  //   z-index: -1;
+  // }
+
+  // &:hover::after {
+  //   opacity: 1;
+  //   width: 100%;
+  // }
+}
+
+@import url("./navigation.scss"), url("./footer.scss");
+
+.upload-box {
+  background-color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 2rem;
+  transform: translate(-50%, -50%);
+  border: black 1px solid;
+}
+
+input[type="file"] {
+  display: block;
+  margin: 0 auto;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+}
+
+input[type="file"]:hover {
+  background-color: #f0f0f0;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background: #f0f0f0;
+}
+
+.sprint-list {
+  margin: 20px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.sort-controls {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.sprint-items {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-around;
+
+  &__item {
+    margin: auto;
+    background-color: #ffffff;
+    border: 1px solid #333;
+    padding: 15px;
+    width: 250px;
+    transition: transform 0.3s;
+    & > * {
+      text-decoration: none;
+      color: #333;
+    }
+
+    &:hover {
+      box-shadow: 9px 9px 0 rgba(231, 79, 9, 0.603);
+      transition: all 0.3s ease-in-out;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 5px 0;
+    }
+  }
+}
+
+a {
+  text-decoration: none;
+}

@@ -3,7 +3,7 @@ function Home() {
   return (
     <main>
       <h1>
-        Дашборд
+        Стартовая страница
       </h1>
     </main>
   )

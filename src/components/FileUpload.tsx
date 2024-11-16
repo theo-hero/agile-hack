@@ -9,19 +9,14 @@ interface CsvRow {
 const FileUpload = () => {
   const [file, setFile] = useState<File | null>(null);
   const [csvData, setCsvData] = useState<CsvRow[]>([]);
-  const [txtData, setTxtData] = useState<string[][]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
-    if (selectedFile) {
-      if (selectedFile.type === 'text/csv') {
-        setFile(selectedFile);
-      } else if (selectedFile.type === 'text/plain') {
-        setFile(selectedFile);
-      } else {
-        alert('Пожалуйста, выберите файл с расширением .csv или .txt.');
-        setFile(null);
-      }
+    if (selectedFile && selectedFile.type === 'text/csv') {
+      setFile(selectedFile);
+    } else {
+      alert('Пожалуйста, выберите файл с расширением .csv.');
+      setFile(null);
     }
   };
 
@@ -49,11 +44,7 @@ const FileUpload = () => {
       alert('Не получилось загрузить файл.');
     }
 
-    if (file.type === 'text/csv') {
-      parseCsvFile(file);
-    } else if (file.type === 'text/plain') {
-      parseTxtFile(file);
-    }
+    parseCsvFile(file);
   };
 
   const parseCsvFile = (file: File) => {
@@ -62,55 +53,35 @@ const FileUpload = () => {
       const fileContent = reader.result as string;
       Papa.parse(fileContent, {
         complete: (result) => {
-          const parsedData = result.data.slice(1) as CsvRow[]; 
-          setCsvData(parsedData);
-          console.log('Результат парсинга CSV:', parsedData);
-        },
-        header: true,
-        skipEmptyLines: true, 
-        dynamicTyping: true, 
-      });
-    };
-    reader.readAsText(file);
-  };
+          const data = result.data as string[][];
+          const headers: string[] = data[0];
 
-  const parseTxtFile = (file: File) => { // работает плохо, лучше не надо!
-    const reader = new FileReader();
-    reader.onload = () => {
-      const fileContent = reader.result as string;
-      const lines = fileContent.split('\n').map(line => line.trim());
-      const parsedData = lines.map(line => {
-        const values = line
-          .replace(/"/g, '')
-          .split(',') 
-          .map(value => value.trim());
-        return values;
+          const parsedData = data.slice(1).map((row) => {
+            const rowObj: CsvRow = {};
+            row.forEach((cell, index) => {
+              const header = headers[index];
+              rowObj[header] = cell;
+            });
+            return rowObj;
+          });
+
+          setCsvData(parsedData);
+          console.log('Результат парсинга CSV:', csvData);
+        },
+        skipEmptyLines: true,
+        delimiter: ';',
       });
-      setTxtData(parsedData);
-      console.log('Результат парсинга TXT:', parsedData);
     };
     reader.readAsText(file);
   };
 
   return (
     <div className="upload-box">
-      <h2>Добавить файл (CSV или TXT)</h2>
+      <h2>Добавить файл CSV</h2>
       <form onSubmit={handleSubmit}>
         <input type="file" onChange={handleFileChange} />
         <button type="submit">Загрузить</button>
       </form>
-      {/* {csvData.length > 0 && (
-        <div>
-          <h3>Загруженные данные (CSV)</h3>
-          <pre>{JSON.stringify(csvData, null, 2)}</pre>
-        </div>
-      )}
-      {txtData.length > 0 && (
-        <div>
-          <h3>Загруженные данные (TXT)</h3>
-          <pre>{JSON.stringify(txtData, null, 2)}</pre>
-        </div>
-      )} */}
     </div>
   );
 };
