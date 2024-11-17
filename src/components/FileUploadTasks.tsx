@@ -241,7 +241,6 @@ const FileUploadTasks = ({ setAdd }: UploadProps) => {
   };
 
   const formatValue = (header: string, value: string | number): string | number => {
-    console.log(header);
     if (typeof value === 'string') {
       const date = new Date(value);
       if (!isNaN(date.getTime())) {

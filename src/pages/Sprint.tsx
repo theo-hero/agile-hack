@@ -38,13 +38,13 @@ function Sprint({ sprint }: SprintProps) {
 
   switch (dataPart) {
     case 0:
-      content = <ProgressBar done={15} toDo={20} inProgress={15} old={50} />;
+      // content = <ProgressBar done={15} toDo={20} inProgress={15} old={50} />;
       break;
     case 1:
-      content = <button onClick={addTasksInfo}>Добавить файл с задачами</button>;
+      content = <button className="center-button" onClick={addTasksInfo}>Добавить файл с задачами</button>;
       break;
     case 2:
-      content = <button onClick={addChangeInfo}>Добавить файл с изменениями</button>;
+      content = <button className="center-button" onClick={addChangeInfo}>Добавить файл с изменениями</button>;
       break;
     case 3:
       content = (
