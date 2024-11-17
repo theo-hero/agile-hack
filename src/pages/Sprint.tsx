@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Health from "../components/Health";
 import Timeline from "../components/Timeline";
-import { SprintTypes, TaskTypes } from "../types";
+import { SprintTypes } from "../types";
 import ProgressBar from "../components/ProgressBar";
 import SidePanel from "../components/SidePanel";
 import FileUploadTasks from "../components/FileUploadTasks";
@@ -25,11 +25,13 @@ function Sprint({ sprint }: SprintProps) {
   };
 
   const updateStatus = () => {
+    console.log(sprint);
     // Update status logic
   };
 
   const getTasks = () => {
     // Fetch tasks logic
+    console.log(sprint);
   };
 
   let content;
@@ -56,6 +58,8 @@ function Sprint({ sprint }: SprintProps) {
       break;
     default:
       content = null;
+      updateStatus();
+      getTasks();
   }
 
   return (

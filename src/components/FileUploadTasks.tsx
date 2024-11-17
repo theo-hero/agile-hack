@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Papa from 'papaparse';
 
-export interface TaskTypes {
+interface CsvRow {
   entity_id: number;
   area: string;
   type: string;
@@ -25,9 +25,28 @@ export interface TaskTypes {
   resolution: string | null;
 }
 
-// interface CsvRow {
-//   [key: string]: string | number;
-// }
+export interface TaskTypes {
+  entity_id: number;
+  area: string;
+  type: string;
+  status: string;
+  state: string;
+  priority: string;
+  ticket_number: string;
+  name: string;
+  create_date: string;
+  created_by: string;
+  update_date: string;
+  updated_by: string;
+  parent_ticket_id: number | null;
+  assignee: string;
+  owner: string;
+  due_date: string | null;
+  rank: string;
+  estimation: number | null;
+  spent: string | null;
+  resolution: string | null;
+}
 
 interface UploadProps {
   setAdd: React.Dispatch<React.SetStateAction<boolean>>;
@@ -67,7 +86,7 @@ const FileUploadTasks = ({ setAdd }: UploadProps) => {
         complete: (result) => {
           const data = result.data as string[][];
 
-          const headers = data[1]; // Assuming headers are on the second row
+          const headers = data[1];
           const rows = data.slice(2);
 
           const parsedData: TaskTypes[] = rows.map((row) => {
@@ -152,7 +171,7 @@ const FileUploadTasks = ({ setAdd }: UploadProps) => {
                     taskData.rank = formattedValue as string;
                     break;
                   case 'estimation':
-                    taskData.estimation = formattedValue ? formattedValue as string : null;
+                    taskData.estimation = formattedValue && !isNaN(Number(formattedValue)) ? Number(formattedValue) : null;
                     break;
                   case 'spent':
                     taskData.spent = formattedValue ? formattedValue as string : null;
@@ -180,34 +199,34 @@ const FileUploadTasks = ({ setAdd }: UploadProps) => {
     reader.readAsText(file);
   };
 
-  const sendJsonData = async (data: CsvRow[]) => {
+  const sendJsonData = async (data: TaskTypes[]) => {
     try {
       const formattedData = data.map((row) => {
-        const task: TaskTypes = {
-          entity_id: Number(row["entity_id"]),
-          area: String(row["area"]),
-          type: String(row["type"]),
-          status: String(row["status"]),
-          state: String(row["state"]),
-          priority: String(row["priority"]),
-          ticket_number: String(row["ticket_number"]),
-          name: String(row["name"]),
-          create_date: String(row["create_date"]),
-          created_by: String(row["created_by"]),
-          update_date: String(row["update_date"]),
-          updated_by: String(row["updated_by"]),
-          parent_ticket_id: row["parent_ticket_id"] ? Number(row["parent_ticket_id"]) : null,
-          assignee: String(row["assignee"]),
-          owner: String(row["owner"]),
-          due_date: row["due_date"] ? String(row["due_date"]) : null,
-          rank: String(row["rank"]),
-          estimation: row["estimation"] ? parseFloat(String(row["estimation"])) : null, // Ensure it's a number
-          spent: row["spent"] ? String(row["spent"]) : null,
-          resolution: row["resolution"] ? String(row["resolution"]) : null,
+        const task: CsvRow = {
+          entity_id: row.entity_id,
+          area: row.area,
+          type: row.type,
+          status: row.status,
+          state: row.state,
+          priority: row.priority,
+          ticket_number: row.ticket_number,
+          name: row.name,
+          create_date: row.create_date,
+          created_by: row.created_by,
+          update_date: row.update_date,
+          updated_by: row.updated_by,
+          parent_ticket_id: row.parent_ticket_id,
+          assignee: row.assignee,
+          owner: row.owner,
+          due_date: row.due_date,
+          rank: row.rank,
+          estimation: row.estimation,
+          spent: row.spent,
+          resolution: row.resolution,
         };
         return task;
       });
-  
+
       const response = await axios.post("/tasks/add", formattedData, {
         headers: {
           "Content-Type": "application/json",
@@ -215,24 +234,21 @@ const FileUploadTasks = ({ setAdd }: UploadProps) => {
       });
       console.log(response.data);
       alert("Файл успешно загружен!");
-      setAdd(false); // Close the upload window
+      setAdd(false);
     } catch (error) {
       console.error("Ошибка загрузки:", error);
     }
   };
-  
 
-  // This function checks if the value is a valid date
   const formatValue = (header: string, value: string | number): string | number => {
+    console.log(header);
     if (typeof value === 'string') {
-      // Check if the string looks like a date
       const date = new Date(value);
-      // If it's a valid date string, return the ISO format
       if (!isNaN(date.getTime())) {
         return date.toISOString();
       }
     }
-    return value;  // Return value as is for non-date fields
+    return value;
   };
 
   return (

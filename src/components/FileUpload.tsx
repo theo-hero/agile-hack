@@ -85,7 +85,9 @@ const FileUpload = ({ setAdd }: UploadProps) => {
                     break;
                   case 'entity_ids': 
                     // Assuming the entity_ids is a comma-separated string of numbers
-                    sprintData.entity_ids = formattedValue ? formattedValue.split(',').map(Number) : [];
+                    sprintData.entity_ids = typeof formattedValue === 'string' 
+  ? formattedValue.split(',').map(Number) 
+  : [];
                     break;
                   default:
                     break;
