@@ -4,7 +4,7 @@ interface navProps {
   setAdd: (arg: boolean) => void;
 }
 
-const Navbar = ({setAdd}: navProps) => {
+const Navbar = ({ setAdd }: navProps) => {
   return (
     <nav className="navbar">
       <div className="navbar__links">

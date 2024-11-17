@@ -2,9 +2,17 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Papa from 'papaparse';
 
-interface CsvRow {
-  [key: string]: string | number;
+export interface SprintTypes {  
+  sprint_name: string;
+  sprint_status: string;
+  sprint_start_date: string;
+  sprint_end_date: string;
+  entity_ids: number[];
 }
+
+// interface CsvRow {
+//   [key: string]: string | number;
+// }
 
 interface UploadProps {
   setAdd: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,7 +20,7 @@ interface UploadProps {
 
 const FileUpload = ({ setAdd }: UploadProps) => {
   const [file, setFile] = useState<File | null>(null);
-  const [jsonData, setJsonData] = useState<CsvRow[]>([]);
+  const [jsonData, setJsonData] = useState<SprintTypes[]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -42,39 +50,66 @@ const FileUpload = ({ setAdd }: UploadProps) => {
       const fileContent = reader.result as string;
       Papa.parse(fileContent, {
         complete: (result) => {
-          const data = result.data as string[][]; // Parse the CSV into an array of arrays
-          const headers = data[1]; // Extract headers from the second row (1st index)
-          const rows = data.slice(2); // Extract rows starting from the third row
+          const data = result.data as string[][];
 
-          // Log for debugging
-          console.log('Headers:', headers);
-          console.log('Rows:', rows);
+          const headers = data[1]; // Assuming headers are on the second row
+          const rows = data.slice(2);
 
-          // Map the rows to objects with headers as keys
-          const parsedData = rows.map((row) => {
-            const rowObj: CsvRow = {};
+          const parsedData: SprintTypes[] = rows.map((row) => {
+            const sprintData: SprintTypes = {
+              sprint_name: '',
+              sprint_status: '',
+              sprint_start_date: '',
+              sprint_end_date: '',
+              entity_ids: []
+            };
+
             row.forEach((cell, index) => {
               const header = headers[index];
               if (header) {
-                rowObj[header] = cell;
+                // Format each cell value before assigning it
+                const formattedValue = formatValue(header, cell);
+
+                switch (header) {
+                  case 'sprint_name':
+                    sprintData.sprint_name = formattedValue as string;
+                    break;
+                  case 'sprint_status':
+                    sprintData.sprint_status = formattedValue as string;
+                    break;
+                  case 'sprint_start_date':
+                    sprintData.sprint_start_date = formattedValue as string;
+                    break;
+                  case 'sprint_end_date':
+                    sprintData.sprint_end_date = formattedValue as string;
+                    break;
+                  case 'entity_ids': 
+                    // Assuming the entity_ids is a comma-separated string of numbers
+                    sprintData.entity_ids = formattedValue ? formattedValue.split(',').map(Number) : [];
+                    break;
+                  default:
+                    break;
+                }
               }
             });
-            return rowObj;
+
+            return sprintData;
           });
 
-          setJsonData(parsedData); // Set the state with the parsed JSON data
-          sendJsonData(parsedData); // Optionally send data to the server
+          setJsonData(parsedData);
+          sendJsonData(parsedData);
+          console.log(parsedData);
         },
         skipEmptyLines: true,
-        delimiter: ';', // Ensure this matches your CSV delimiter
+        delimiter: ';',
       });
     };
     reader.readAsText(file);
   };
 
-  const sendJsonData = async (data: CsvRow[]) => {
+  const sendJsonData = async (data: SprintTypes[]) => {
     try {
-      const response = await axios.post('/upload', data, {
+      const response = await axios.post('/sprints/add', data, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -84,6 +119,26 @@ const FileUpload = ({ setAdd }: UploadProps) => {
     } catch (error) {
       console.error('Ошибка загрузки:', error);
     }
+  };
+
+  // This function checks if the value is a valid date
+  const formatValue = (header: string, value: string | number): string | number => {
+    if (typeof value === 'string') {
+      // Check if the string looks like a date
+      const date = new Date(value);
+      // If it's a valid date string, return the ISO format
+      if (!isNaN(date.getTime())) {
+        return date.toISOString();
+      }
+    }
+
+    // For entity_ids or other number-related columns, we just return the value as it is
+    if (header === 'entity_ids') {
+      return value;  // Keep it as string until we handle it in the specific case
+    }
+
+    // Return the value as is if it's not a date
+    return value;
   };
 
   return (

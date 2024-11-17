@@ -5,6 +5,13 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/agile-hack/',
   plugins: [react()],
+  server: {
+    proxy: {
+      '/sprint': 'http://localhost:5001', 
+      '/task': 'http://localhost:5001', 
+      '/tasks': 'http://localhost:5001', 
+    },
+  },
   css: {
     preprocessorOptions: {
       scss: {

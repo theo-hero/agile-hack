@@ -57,7 +57,7 @@ button {
 }
 
 @import url("./navigation.scss"), url("./footer.scss"), url("./sprintlist.scss");
-@import url("./slider.scss");
+@import url("./slider.scss"), url("./sprint.scss");
 
 .sprint-list {
   margin: 20px;
@@ -120,4 +120,54 @@ a {
   width: 25px;
   aspect-ratio: 1 / 1;
   background-image: url('../assets/close.svg');
+}
+
+.side-panel {
+  background-color: #efefef;
+  border-radius: 10px;
+  padding: 10px;
+  position: absolute;
+  top: 100px;
+  left: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  & > * {
+    cursor: pointer;
+  }
+}
+
+.progress-bar-container {
+  width: 50%;
+  height: 30px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  display: flex;
+  margin: auto;
+}
+
+.progress-bar {
+  height: 100%;
+}
+
+.done {
+  background-color: #4caf50;
+  border-radius: 5px 0 0 5px;
+}
+
+.in-progress {
+  background-color: #ff9800;
+}
+
+.to-do {
+  background-color: #f44336;
+  border-radius: 0 5px 5px 0;
+}
+
+.old {
+  background-color: #9e9e9e;
+}
+
+.elements > * {
+  margin-top: 20px;
 }
